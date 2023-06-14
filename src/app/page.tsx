@@ -6,9 +6,15 @@ const getTodos = () => {
   return prisma.todo.findMany();
 };
 
+async function toggleTodo(id: string, complete: boolean) {
+  'use server';
+
+  await prisma.todo.update({ where: { id }, data: { complete: complete } });
+}
+
 export default async function Home() {
   const todos = await getTodos();
-  // await prisma.todo.create({ data: { title: 'first Todo', complete: false } });
+
   return (
     <>
       <header className="flex justify-between mb-4 items-center">
@@ -24,7 +30,7 @@ export default async function Home() {
       </header>
       <ul>
         {todos.map((todo, i) => {
-          return <TodoItem key={todo.id} {...todo} />;
+          return <TodoItem key={todo.id} {...todo} toggleTodo={toggleTodo} />;
         })}
       </ul>
     </>
